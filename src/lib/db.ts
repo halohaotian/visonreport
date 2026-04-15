@@ -101,9 +101,9 @@ export async function getDailyStats(days: number = 30) {
   const sql = getSql();
   return sql`
     WITH RECURSIVE dates(date) AS (
-      SELECT CURRENT_DATE - (${days}::int || ' days')::interval::date
+      SELECT (CURRENT_DATE - (${days} || ' days')::interval)::date
       UNION ALL
-      SELECT (date + 1)::date FROM dates WHERE date < CURRENT_DATE
+      SELECT (date + interval '1 day')::date FROM dates WHERE date < CURRENT_DATE
     )
     SELECT
       d.date::text as date,
@@ -120,15 +120,15 @@ export async function getDailyStats(days: number = 30) {
 export async function getSummaryStats() {
   const sql = getSql();
   const [users, waitlist, subs, revenue] = await Promise.all([
-    sql`SELECT COUNT(*)::int as count FROM vr_users`,
-    sql`SELECT COUNT(*)::int as count FROM vr_waitlist`,
-    sql`SELECT COUNT(*)::int as count FROM vr_subscriptions WHERE status = 'active'`,
-    sql`SELECT COALESCE(SUM(amount), 0)::float as total FROM vr_subscriptions WHERE status = 'active'`,
+    sql`SELECT COUNT(*) as count FROM vr_users`,
+    sql`SELECT COUNT(*) as count FROM vr_waitlist`,
+    sql`SELECT COUNT(*) as count FROM vr_subscriptions WHERE status = 'active'`,
+    sql`SELECT COALESCE(SUM(amount), 0) as total FROM vr_subscriptions WHERE status = 'active'`,
   ]);
   return {
-    totalUsers: users[0].count,
-    totalWaitlist: waitlist[0].count,
-    totalSubscriptions: subs[0].count,
-    totalRevenue: revenue[0].total,
+    totalUsers: Number(users[0].count),
+    totalWaitlist: Number(waitlist[0].count),
+    totalSubscriptions: Number(subs[0].count),
+    totalRevenue: Number(revenue[0].total),
   };
 }

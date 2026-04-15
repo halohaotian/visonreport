@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: '该邮箱已在等候列表中' }, { status: 409 });
     }
     await sql`INSERT INTO vr_waitlist (email, source) VALUES (${email}, ${source || 'landing'})`;
-    const count = await sql`SELECT COUNT(*)::int as c FROM vr_waitlist`;
-    return NextResponse.json({ ok: true, position: count[0].c });
+    const count = await sql`SELECT COUNT(*) as c FROM vr_waitlist`;
+    return NextResponse.json({ ok: true, position: Number(count[0].c) });
   } catch {
     return NextResponse.json({ error: '服务器错误' }, { status: 500 });
   }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { neon } from '@neondatabase/serverless';
+import { getSql } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: '请输入有效的邮箱地址' }, { status: 400 });
     }
-    const sql = neon(process.env.BLASTOFF_DATABASE_URL!);
+    const sql = getSql();
     const existing = await sql`SELECT id FROM vr_waitlist WHERE email = ${email}`;
     if (existing.length > 0) {
       return NextResponse.json({ error: '该邮箱已在等候列表中' }, { status: 409 });

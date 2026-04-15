@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { neon } from '@neondatabase/serverless';
+import { getSql } from '@/lib/db';
 import { comparePassword, signToken } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
     if (!email || !password) return NextResponse.json({ error: '请输入邮箱和密码' }, { status: 400 });
-    const sql = neon(process.env.BLASTOFF_DATABASE_URL!);
+    const sql = getSql();
     const users = await sql`SELECT * FROM vr_users WHERE email = ${email}`;
     if (users.length === 0) return NextResponse.json({ error: '邮箱或密码错误' }, { status: 401 });
     const user = users[0] as any;

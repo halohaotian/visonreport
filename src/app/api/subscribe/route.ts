@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { neon } from '@neondatabase/serverless';
+import { getSql } from '@/lib/db';
 import { verifyToken, getTokenFromHeaders } from '@/lib/auth';
 import { trackSubscription } from '@/lib/db';
 
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     };
     const selected = plans[plan];
     if (!selected) return NextResponse.json({ error: '无效的套餐' }, { status: 400 });
-    const sql = neon(process.env.BLASTOFF_DATABASE_URL!);
+    const sql = getSql();
     const tradeNo = `VR${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
     await sql`INSERT INTO vr_subscriptions (user_id, plan, amount, status, trade_no) VALUES (${payload.userId}, ${plan}, ${selected.price}, 'active', ${tradeNo})`;
     await trackSubscription();

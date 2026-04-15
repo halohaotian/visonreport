@@ -1,9 +1,9 @@
-import { neon } from '@neondatabase/serverless';
+import postgres from 'postgres';
 
-const BLASTOFF_DATABASE_URL = process.env.BLASTOFF_DATABASE_URL!;
+const sql = postgres(process.env.DATABASE_URL!);
 
 export function getSql() {
-  return neon(BLASTOFF_DATABASE_URL);
+  return sql;
 }
 
 // 初始化数据库表（部署时调用一次）

@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const { email, password } = await req.json();
     if (!email || !password) return NextResponse.json({ error: '请输入邮箱和密码' }, { status: 400 });
     const sql = neon(process.env.BLASTOFF_DATABASE_URL!);
-    const users = await sql`SELECT * FROM users WHERE email = ${email}`;
+    const users = await sql`SELECT * FROM vr_users WHERE email = ${email}`;
     if (users.length === 0) return NextResponse.json({ error: '邮箱或密码错误' }, { status: 401 });
     const user = users[0] as any;
     if (!(await comparePassword(password, user.password))) return NextResponse.json({ error: '邮箱或密码错误' }, { status: 401 });

@@ -62,20 +62,20 @@ const today = () => new Date().toISOString().split('T')[0];
 export async function trackPageView(path: string, referrer?: string, ip?: string, userAgent?: string) {
   const sql = getSql();
   const d = today();
-  await sql`INSERT INTO page_views (path, referrer, ip, user_agent) VALUES (${path}, ${referrer || null}, ${ip || null}, ${userAgent || null})`;
+  await sql`INSERT INTO vr_page_views (path, referrer, ip, user_agent) VALUES (${path}, ${referrer || null}, ${ip || null}, ${userAgent || null})`;
   await sql`
-    INSERT INTO daily_stats (date, page_views) VALUES (${d}, 1)
-    ON CONFLICT (date) DO UPDATE SET page_views = daily_stats.page_views + 1
+    INSERT INTO vr_daily_stats (date, page_views) VALUES (${d}, 1)
+    ON CONFLICT (date) DO UPDATE SET page_views = vr_daily_stats.page_views + 1
   `;
 }
 
 export async function trackClick(element: string, path?: string) {
   const sql = getSql();
   const d = today();
-  await sql`INSERT INTO click_events (element, path) VALUES (${element}, ${path || null})`;
+  await sql`INSERT INTO vr_click_events (element, path) VALUES (${element}, ${path || null})`;
   await sql`
-    INSERT INTO daily_stats (date, clicks) VALUES (${d}, 1)
-    ON CONFLICT (date) DO UPDATE SET clicks = daily_stats.clicks + 1
+    INSERT INTO vr_daily_stats (date, clicks) VALUES (${d}, 1)
+    ON CONFLICT (date) DO UPDATE SET clicks = vr_daily_stats.clicks + 1
   `;
 }
 
@@ -83,8 +83,8 @@ export async function trackRegistration() {
   const sql = getSql();
   const d = today();
   await sql`
-    INSERT INTO daily_stats (date, registrations) VALUES (${d}, 1)
-    ON CONFLICT (date) DO UPDATE SET registrations = daily_stats.registrations + 1
+    INSERT INTO vr_daily_stats (date, registrations) VALUES (${d}, 1)
+    ON CONFLICT (date) DO UPDATE SET registrations = vr_daily_stats.registrations + 1
   `;
 }
 
@@ -92,8 +92,8 @@ export async function trackSubscription() {
   const sql = getSql();
   const d = today();
   await sql`
-    INSERT INTO daily_stats (date, subscriptions) VALUES (${d}, 1)
-    ON CONFLICT (date) DO UPDATE SET subscriptions = daily_stats.subscriptions + 1
+    INSERT INTO vr_daily_stats (date, subscriptions) VALUES (${d}, 1)
+    ON CONFLICT (date) DO UPDATE SET subscriptions = vr_daily_stats.subscriptions + 1
   `;
 }
 
@@ -112,7 +112,7 @@ export async function getDailyStats(days: number = 30) {
       COALESCE(s.registrations, 0) as registrations,
       COALESCE(s.subscriptions, 0) as subscriptions
     FROM dates d
-    LEFT JOIN daily_stats s ON d.date::text = s.date
+    LEFT JOIN vr_daily_stats s ON d.date::text = s.date
     ORDER BY d.date ASC
   `;
 }
@@ -120,10 +120,10 @@ export async function getDailyStats(days: number = 30) {
 export async function getSummaryStats() {
   const sql = getSql();
   const [users, waitlist, subs, revenue] = await Promise.all([
-    sql`SELECT COUNT(*)::int as count FROM users`,
-    sql`SELECT COUNT(*)::int as count FROM waitlist`,
-    sql`SELECT COUNT(*)::int as count FROM subscriptions WHERE status = 'active'`,
-    sql`SELECT COALESCE(SUM(amount), 0)::float as total FROM subscriptions WHERE status = 'active'`,
+    sql`SELECT COUNT(*)::int as count FROM vr_users`,
+    sql`SELECT COUNT(*)::int as count FROM vr_waitlist`,
+    sql`SELECT COUNT(*)::int as count FROM vr_subscriptions WHERE status = 'active'`,
+    sql`SELECT COALESCE(SUM(amount), 0)::float as total FROM vr_subscriptions WHERE status = 'active'`,
   ]);
   return {
     totalUsers: users[0].count,

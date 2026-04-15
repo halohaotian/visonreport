@@ -8,6 +8,6 @@ export async function GET(req: NextRequest) {
   const payload = verifyToken(token);
   if (!payload || payload.role !== 'admin') return NextResponse.json({ error: '权限不足' }, { status: 403 });
   const sql = neon(process.env.BLASTOFF_DATABASE_URL!);
-  const list = await sql`SELECT * FROM waitlist ORDER BY created_at DESC`;
+  const list = await sql`SELECT * FROM vr_waitlist ORDER BY created_at DESC`;
   return NextResponse.json({ list });
 }

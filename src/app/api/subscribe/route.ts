@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (!selected) return NextResponse.json({ error: '无效的套餐' }, { status: 400 });
     const sql = neon(process.env.BLASTOFF_DATABASE_URL!);
     const tradeNo = `VR${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
-    await sql`INSERT INTO subscriptions (user_id, plan, amount, status, trade_no) VALUES (${payload.userId}, ${plan}, ${selected.price}, 'active', ${tradeNo})`;
+    await sql`INSERT INTO vr_subscriptions (user_id, plan, amount, status, trade_no) VALUES (${payload.userId}, ${plan}, ${selected.price}, 'active', ${tradeNo})`;
     await trackSubscription();
     return NextResponse.json({ ok: true, tradeNo, plan: selected.name, amount: selected.price, message: '订阅成功！（当前为模拟支付）' });
   } catch { return NextResponse.json({ error: '服务器错误' }, { status: 500 }); }

@@ -1,9 +1,9 @@
 import { neon } from '@neondatabase/serverless';
 
-const DATABASE_URL = process.env.DATABASE_URL!;
+const BLASTOFF_DATABASE_URL = process.env.BLASTOFF_DATABASE_URL!;
 
 export function getSql() {
-  return neon(DATABASE_URL);
+  return neon(BLASTOFF_DATABASE_URL);
 }
 
 // 初始化数据库表（部署时调用一次）

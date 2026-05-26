@@ -20,6 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: isEn
       ? 'Transform requirements into visual architecture diagrams with AI. See the whole project in 1 minute.'
       : '上传需求文档，AI一键生成项目需求全景可视化图。让团队在一分钟内看到需求全貌。',
+    alternates: { canonical: `https://visonreport.vercel.app/${locale}` },
   };
 }
 

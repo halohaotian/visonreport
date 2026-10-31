@@ -20,6 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     ? 'Transform requirement documents into visual architecture diagrams with AI. Upload PRDs, specs, or user stories and get a project overview map in seconds. See the whole project structure, module relationships, and missing requirements at a glance.'
     : '上传需求文档，AI 一键生成项目需求全景可视化图。让团队在一分钟内看到需求全貌——模块关系、功能清单、遗漏点一目了然。支持中英文需求文档，导出高清架构图。';
   return {
+    metadataBase: new URL('https://visonreport.com'),
     title,
     description,
     alternates: { canonical: `https://visonreport.com/${locale}` },
@@ -30,13 +31,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       siteName: 'VisonReport',
       locale: isEn ? 'en_US' : 'zh_CN',
       type: 'website',
-      images: [{ url: 'https://visonreport.com/og-image.png', width: 1200, height: 630, alt: 'VisonReport — Visual Requirement Intelligence' }],
+      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'VisonReport — Visual Requirement Intelligence' }],
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: ['https://visonreport.com/og-image.png'],
+      images: ['/og-image.png'],
     },
   };
 }

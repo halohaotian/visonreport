@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 
-const DOMAIN = 'https://visonreport.vercel.app';
+const DOMAIN = 'https://visonreport.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
